@@ -92,6 +92,11 @@
             <version>2.6.1</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -148,6 +153,4 @@
             </properties>
         </profile>
     </profiles>
-
-
 </project>
