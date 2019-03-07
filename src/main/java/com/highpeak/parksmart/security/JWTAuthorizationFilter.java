@@ -1,4 +1,4 @@
-package com.highpeak.parksmart.srevice;
+package com.highpeak.parksmart.security;
 
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationManager;

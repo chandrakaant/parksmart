@@ -1,12 +1,10 @@
-package com.highpeak.parksmart.srevice;
+package com.highpeak.parksmart.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import com.highpeak.idp.datastore.model.UserModel;
-import com.highpeak.idp.datastore.repositories.UserRepository;
-import com.highpeak.idp.pojo.LoginBean;
-import com.highpeak.idp.pojo.LoginResponseBean;
-import com.highpeak.idp.util.NullEmptyUtils;
+import com.highpeak.parksmart.datastore.model.UserModel;
+import com.highpeak.parksmart.pojo.LoginBean;
+import com.highpeak.parksmart.util.NullEmptyUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

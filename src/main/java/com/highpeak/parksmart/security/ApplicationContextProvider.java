@@ -1,5 +1,5 @@
 
-package com.highpeak.parksmart.srevice;
+package com.highpeak.parksmart.security;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
