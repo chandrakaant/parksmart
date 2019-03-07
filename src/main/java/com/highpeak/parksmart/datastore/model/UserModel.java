@@ -33,6 +33,19 @@ public class UserModel {
     @Column(name = "u_refresh_token")
     private String refreshToken;
 
+    @Column(name = "u_isActive")
+    private boolean isActive;
+
+    public boolean isActive()
+    {
+        return isActive;
+    }
+
+    public void setActive(boolean active)
+    {
+        isActive = active;
+    }
+
     public int getId()
     {
         return id;

@@ -131,7 +131,8 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
         try
         {
             Integer messageCode = 401;
-            if( userModel!= null && !NullEmptyUtils.isNull(userModel))
+            if( userModel!= null && !NullEmptyUtils.isNull(userModel)
+                    && NullEmptyUtils.isNull(userModel.isActive()) )
             {
 
                 message = "Please Reset Password Before Login.";

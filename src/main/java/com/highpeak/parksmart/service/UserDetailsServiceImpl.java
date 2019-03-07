@@ -36,6 +36,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Optional<UserModel> applicationUser = userRepository
                 .findByEmailAndIsActiveTrue(emailId);
 
+
         if( !applicationUser.isPresent() )
         {
             throw new UsernameNotFoundException(emailId);
