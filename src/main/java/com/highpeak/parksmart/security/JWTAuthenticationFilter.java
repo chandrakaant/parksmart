@@ -3,7 +3,9 @@ package com.highpeak.parksmart.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.highpeak.parksmart.datastore.model.UserModel;
+import com.highpeak.parksmart.datastore.repository.UserRepository;
 import com.highpeak.parksmart.pojo.LoginBean;
+import com.highpeak.parksmart.pojo.LoginResponseBean;
 import com.highpeak.parksmart.util.NullEmptyUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -129,8 +131,7 @@ public class JWTAuthenticationFilter extends AbstractAuthenticationProcessingFil
         try
         {
             Integer messageCode = 401;
-            if( userModel!= null && !NullEmptyUtils.isNull(userModel)
-                    && NullEmptyUtils.isNull(userModel.isActive()) )
+            if( userModel!= null && !NullEmptyUtils.isNull(userModel))
             {
 
                 message = "Please Reset Password Before Login.";

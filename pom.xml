@@ -138,7 +138,6 @@
             </properties>
         </profile>
 
-
         <profile>
             <id>dev</id>
             <activation>
