@@ -47,7 +47,7 @@ CREATE TABLE `parksmart`.`ps_slot` (
   INDEX `fk_p_idk_idx` (`p_id` ASC),
   CONSTRAINT `fk_p_idk`
     FOREIGN KEY (`p_id`)
-    REFERENCES `parksmart`.`parking_area` (`parking_area_id`)
+    REFERENCES `parksmart`.`ps_parking_area` (`parking_area_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
