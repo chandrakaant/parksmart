@@ -32,5 +32,4 @@ public class UserController extends AbstractRestService {
                 "This method shouldn't be called. It's implemented by Spring Security filters.");
     }
 
-
 }
