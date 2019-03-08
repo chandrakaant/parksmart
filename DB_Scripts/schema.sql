@@ -57,12 +57,12 @@ CREATE TABLE `parksmart`.`ps_vehicle` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
-CREATE TABLE `parkSmart`.`ps_parking_area` (
+CREATE TABLE `parksmart`.`ps_parking_area` (
   `parking_area_id` INT NOT NULL AUTO_INCREMENT,
   `parking_area_location` VARCHAR(45) NULL,
   PRIMARY KEY (`parking_area_id`));
 
-ALTER TABLE `parkSmart`.`parking_area`
+ALTER TABLE `parksmart`.`ps_parking_area`
 ADD COLUMN `parking_area` VARCHAR(45) NULL DEFAULT NULL AFTER `parking_area_location`;
 
 CREATE TABLE `parksmart`.`ps_slot` (
