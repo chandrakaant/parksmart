@@ -41,4 +41,46 @@ public class ParkingAreaController extends AbstractRestService
             return buildError(e);
         }
     }
+
+    /**
+     * service to fetch parking area by id
+     *
+     * @param parkingAreaBean
+     * @return
+     * @throws DataException
+     */
+
+    @PostMapping("/fetchParkingArea")
+    public ResponseEntity<?> fetchParkingArea(@RequestBody ParkingAreaBean parkingAreaBean)
+    {
+        try
+        {
+            return buildResponse(parkingAreaService.fetchParkingArea(parkingAreaBean));
+        }
+        catch(DataException e)
+        {
+            return buildError(e);
+        }
+    }
+
+    /**
+     * service to fetch all
+     *
+     * @param parkingAreaBean
+     * @return
+     * @throws DataException
+     */
+
+    @PostMapping("/fetchAllParkingArea")
+    public ResponseEntity<?> fetchAllParkingArea(@RequestBody ParkingAreaBean parkingAreaBean)
+    {
+        try
+        {
+            return buildResponse(parkingAreaService.fetchAllParkingArea(parkingAreaBean));
+        }
+        catch(DataException e)
+        {
+            return buildError(e);
+        }
+    }
 }
