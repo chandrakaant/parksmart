@@ -85,4 +85,5 @@ public class Constants {
     public static final String RABBIT_HOST = "localhost";
 
     public static final String REEXTRACTED_SUCCESSFULLY="Re Extracted Document Successfully";
+    public static final String PARKING_AREA_DOESNT_EXIST ="parksmart.error.parking.area.doesnt.exist";
 }
