@@ -10,6 +10,28 @@ public class UserBean {
     private String password;
     private Timestamp createdDate;
     private Timestamp modifiedDate;
+    private int role;
+    private boolean isActive;
+
+    public boolean isActive()
+    {
+        return isActive;
+    }
+
+    public void setActive(boolean active)
+    {
+        isActive = active;
+    }
+
+    public int getRole()
+    {
+        return role;
+    }
+
+    public void setRole(int role)
+    {
+        this.role = role;
+    }
 
     public int getUserId() {
         return userId;

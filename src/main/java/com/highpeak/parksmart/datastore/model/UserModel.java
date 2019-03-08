@@ -33,7 +33,7 @@ public class UserModel {
     @Column(name = "u_refresh_token")
     private String refreshToken;
 
-    @Column(name = "u_isActive")
+    @Column(name = "u_is_active")
     private boolean isActive;
 
     public boolean isActive()
