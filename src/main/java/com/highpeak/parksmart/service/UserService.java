@@ -3,6 +3,7 @@ package com.highpeak.parksmart.service;
 
 import com.highpeak.parksmart.datastore.model.UserModel;
 import com.highpeak.parksmart.exception.DataException;
+import com.highpeak.parksmart.pojo.LoginBean;
 import com.highpeak.parksmart.pojo.UserBean;
 
 public interface UserService {
@@ -10,11 +11,19 @@ public interface UserService {
     /**
      * service td add or  update user
      * @param userBean user bean
-     * @param userId user id of user creating or updating user
      * @return user bean
      * @throws DataException data exception
      */
-    UserBean addOrUpdateUser(UserBean userBean, int userId) throws DataException;
+    UserBean registerUser(UserBean userBean) throws DataException;
+
+    /**
+     * service td add or  update user
+     * @param userBean user bean
+     * @return user bean
+     * @throws DataException data exception
+     */
+    UserBean updateUser(UserBean userBean, int userId) throws DataException;
+
 
     /**
      * service to send forgot password mail
@@ -26,11 +35,10 @@ public interface UserService {
     /**
      * service to compare and set password
      *
-     * @param token    unique token
-     * @param userBean user bean
+     * @param loginBean user bean
      * @throws DataException data exception
      */
-    String setNewPassword(String token, UserBean userBean) throws DataException;
+    String setNewPassword(LoginBean loginBean, int userId) throws DataException;
 
     /**
      * service to delete user
@@ -40,4 +48,6 @@ public interface UserService {
      * @throws DataException data exception
      */
     String deleteUser(UserBean userBean, int userId) throws DataException;
+
+    UserBean fetchUser(int userId) throws DataException;
 }

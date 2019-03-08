@@ -15,4 +15,6 @@ public interface RoleRepository extends PagingAndSortingRepository<RoleEntity, I
      * @return
      */
     Optional<RoleEntity> findByRoleId(int roleId);
+
+    Optional<RoleEntity> findByRoleName(String roleName);
 }

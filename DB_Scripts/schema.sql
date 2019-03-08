@@ -23,7 +23,7 @@ AUTO_INCREMENT = 3
 DEFAULT CHARACTER SET = latin1;
 
 CREATE TABLE `parksmart`.`ps_user_role` (
-  `ur_id` INT NOT NULL,
+  `ur_id` INT NOT NULL AUTO_INCREMENT,
   `ur_user_id` INT NOT NULL,
   `ur_role_id` INT NOT NULL,
   PRIMARY KEY (`ur_id`),

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRoleRepository extends PagingAndSortingRepository<UserRoleModel, Integer> {
 
-    @Query(nativeQuery = true, value = "select * from parksmart.ps_user_role ur where ur.ps_user_id=:id limit 1")
+    @Query(nativeQuery = true, value = "select * from parksmart.ps_user_role ur where ur.ur_user_id=:id limit 1")
     UserRoleModel findRoleIdByUserId(@Param("id") int id);
 
     @Query(nativeQuery = true, value = "select r.r_name from ps_user_role ur inner join ps_role r on \n" +

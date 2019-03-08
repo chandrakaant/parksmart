@@ -8,10 +8,43 @@ public class UserBean {
     private String name;
     private String email;
     private String password;
+    private String confirmPassword;
     private Timestamp createdDate;
     private Timestamp modifiedDate;
     private int role;
     private boolean isActive;
+    private long phone;
+    private String location;
+
+    public String getConfirmPassword()
+    {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword)
+    {
+        this.confirmPassword = confirmPassword;
+    }
+
+    public long getPhone()
+    {
+        return phone;
+    }
+
+    public void setPhone(long phone)
+    {
+        this.phone = phone;
+    }
+
+    public String getLocation()
+    {
+        return location;
+    }
+
+    public void setLocation(String location)
+    {
+        this.location = location;
+    }
 
     public boolean isActive()
     {

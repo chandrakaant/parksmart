@@ -53,6 +53,20 @@ public class ValidateUserDetailsUtils {
         return matcher.matches();
     }
 
+    /**
+     * Validate phone number with regular expression
+     *
+     * @param phoneNumber
+     * @return true valid phone number, false invalid phone number
+     */
+    public static boolean isInvalidPhoneNumber(String phoneNumber) {
+        boolean isInvalidPhoneNumber = false;
+        if (!(phoneNumber.matches("^((?=[+0-9\\-])(?![_]).)*$"))) {
+            isInvalidPhoneNumber = true;
+        }
+        return isInvalidPhoneNumber;
+    }
+
 
     /**
      * Checks whether the given string contains special characters
