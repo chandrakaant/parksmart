@@ -36,6 +36,32 @@ public class UserModel {
     @Column(name = "u_is_active")
     private boolean isActive;
 
+    @Column(name = "u_phone")
+    private long phone;
+
+    @Column(name = "u_location")
+    private String location;
+
+    public long getPhone()
+    {
+        return phone;
+    }
+
+    public void setPhone(long phone)
+    {
+        this.phone = phone;
+    }
+
+    public String getLocation()
+    {
+        return location;
+    }
+
+    public void setLocation(String location)
+    {
+        this.location = location;
+    }
+
     public boolean isActive()
     {
         return isActive;

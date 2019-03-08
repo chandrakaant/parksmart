@@ -33,27 +33,21 @@ public class ValidationHelper {
                         HttpStatus.BAD_REQUEST);
             }
 
-            if( NullEmptyUtils.isNullorEmpty(userBean.getEmail().trim()) )
-
+            if( NullEmptyUtils.isNullorEmpty(userBean.getEmail().trim())
+                    && !ValidateUserDetailsUtils.isInvalidEmail(userBean.getEmail()))
             {
                 throw new DataException("400", messageBundleResource.getMessage(Constants.EMPTY_EMAIL_FIELD),
                         HttpStatus.BAD_REQUEST);
             }
 
-            if( !NullEmptyUtils.isNullorEmpty(userBean.getEmail().trim())
-                    && !ValidateUserDetailsUtils.isInvalidEmail(userBean.getEmail()) )
-
+            if( !NullEmptyUtils.isNullorEmpty(userBean.getPhone()) &&
+                    !ValidateUserDetailsUtils.isInvalidPhoneNumber(String.valueOf(userBean.getPhone())))
             {
 
-                throw new DataException("400", messageBundleResource.getMessage(Constants.EMPTY_EMAIL_FIELD),
+                throw new DataException("400", messageBundleResource.getMessage("EMPTY/INVALID PHONE NUMBER"),
                         HttpStatus.BAD_REQUEST);
             }
 
-            if( NullEmptyUtils.isNullorEmpty(userBean.getRole()) )
-            {
-                throw new DataException("400", messageBundleResource.getMessage(Constants.INVALID_ROLE),
-                        HttpStatus.BAD_REQUEST);
-            }
         }
         catch( DataException e )
         {

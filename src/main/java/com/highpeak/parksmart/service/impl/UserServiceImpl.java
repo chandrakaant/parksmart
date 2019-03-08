@@ -8,7 +8,9 @@ import com.highpeak.parksmart.datastore.repository.RoleRepository;
 import com.highpeak.parksmart.datastore.repository.UserRepository;
 import com.highpeak.parksmart.datastore.repository.UserRoleRepository;
 import com.highpeak.parksmart.exception.DataException;
+import com.highpeak.parksmart.pojo.LoginBean;
 import com.highpeak.parksmart.pojo.UserBean;
+import com.highpeak.parksmart.service.CacheService;
 import com.highpeak.parksmart.service.UserService;
 import com.highpeak.parksmart.util.*;
 import org.slf4j.Logger;
@@ -41,52 +43,36 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRoleRepository userRoleRepository;
 
+    @Autowired
+    private OtpGeneration otpGeneration;
+
+    @Autowired
+    private CacheService cacheService;
+
     /**
      * service td add or  update user
      * @param userBean user bean
-     * @param userId user id of user creating or updating user
      * @return user bean
      * @throws DataException data exception
      */
     @Override
-    public UserBean addOrUpdateUser(UserBean userBean, int userId) throws DataException
+    public UserBean registerUser(UserBean userBean) throws DataException
     {
-        LOGGER.info("add or update user");
+        LOGGER.info("register user");
         try
         {
-            Optional<UserModel> optionalUserModel = userRepository.findByIdAndIsActiveTrue(userId);
-            ValidationHelper.checkUserById(optionalUserModel);
-
-            if(NullEmptyUtils.isNull(userBean.getUserId()))
-                ValidationHelper.validateSaveUserProfile(userBean);
+            Optional<UserModel> optionalUserModel = userRepository.findByEmailAndIsActiveTrue(userBean.getEmail());
+            ValidationHelper.checkByEmailId(optionalUserModel);
 
             UserModel userModel = new UserModel();
-            Optional<UserModel> userModelOptional = null;
-            String email = userBean.getEmail();
+            userModel = mapUserBeanToUserModel(userBean, userModel);
 
+            if (userBean.getPassword().equals(userBean.getConfirmPassword()))
+                userModel.setPassword(bCryptPasswordEncoder.encode(userBean.getPassword()));
 
-            if (!NullEmptyUtils.isNullorEmpty(userBean.getUserId()))
-            {
-                userModelOptional = userRepository.findByIdAndIsActiveTrue(userBean.getUserId());
-                ValidationHelper.checkUserById(userModelOptional);
-            }
+            userModel = userRepository.save(userModel);
 
-            if (!NullEmptyUtils.isNullorEmpty(email))
-            {
-                userModelOptional = userRepository.findByEmailAndIsActiveTrue(email);
-                ValidationHelper.checkByEmailId(userModelOptional);
-            }
-
-            if(!NullEmptyUtils.isNull(userModelOptional) && userModelOptional.isPresent())
-                userModel = userModelOptional.get();
-
-
-            userModel = userRepository.save(mapUserBeanToUserModel(userBean, userModel, optionalUserModel.get().getId()));
-
-
-            if (!NullEmptyUtils.isNullorEmpty(userBean.getRole()))
-                setUserRole(userBean, userModel);
-
+            setUserRole(userModel);
             return mapUserModelToUserBean(userModel);
         }
         catch (DataException e)
@@ -103,15 +89,14 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * private service to set user role
-     * @param userBean
-     * @param userModel
+     * private function to set user role
+     * @param userModel user model
      */
-    private void setUserRole(UserBean userBean, UserModel userModel)
+    private void setUserRole(UserModel userModel)
     {
         LOGGER.info("Setting user role");
 
-        Optional<RoleEntity> optionalRoleEntity = roleRepository.findByRoleId(userBean.getRole());
+        Optional<RoleEntity> optionalRoleEntity = roleRepository.findByRoleName("DRIVER");
         RoleEntity roleEntity = optionalRoleEntity.get();
 
         UserRoleModel userRoleModel = NullEmptyUtils.isNull(userRoleRepository.findRoleIdByUserId(userModel.getId())) ?
@@ -121,6 +106,25 @@ public class UserServiceImpl implements UserService {
         userRoleModel.setUserId(userModel);
         userRoleModel.setRoleId(roleEntity);
         userRoleRepository.save(userRoleModel);
+    }
+
+
+    /**
+     * service to update user
+     * @param userBean user bean
+     * @param userId user id
+     * @return user bean
+     * @throws DataException exception
+     */
+    @Override
+    public UserBean updateUser(UserBean userBean, int userId) throws DataException
+    {
+        Optional<UserModel> optionalUserModel = userRepository.findByIdAndIsActiveTrue(userId);
+        ValidationHelper.checkUserById(optionalUserModel);
+
+        UserModel userModel = optionalUserModel.get();
+        userModel = userRepository.save(mapUserBeanToUserModel(userBean, userModel));
+        return mapUserModelToUserBean(userModel);
     }
 
 
@@ -136,54 +140,31 @@ public class UserServiceImpl implements UserService {
         user.setUserId(userModel.getId());
         user.setEmail(userModel.getEmail());
         user.setName(userModel.getUserName());
-        user.setRole(getRoleByUser(userModel).getRoleId());
-        user.setActive(userModel.isActive());
+        user.setPhone(userModel.getPhone());
         return user;
-    }
-
-    /**
-     * method to get role entity from database
-     *
-     * @param userModel user model
-     * @return role entity
-     */
-    private RoleEntity getRoleByUser(UserModel userModel)
-    {
-        UserRoleModel roleId = userRoleRepository.findRoleIdByUserId(userModel.getId());
-        Optional<RoleEntity> roleEntity = roleRepository.findByRoleId(roleId.getRoleId().getRoleId());
-        return roleEntity.get();
     }
 
     /**
      * maps user pojo to user model
      *
      * @param userBean user pojo
-     * @param actingUserId id of user taking action of create or update
      * @return UserModel
      */
-    private UserModel mapUserBeanToUserModel(UserBean userBean, UserModel userModel, int actingUserId)
+    private UserModel mapUserBeanToUserModel(UserBean userBean, UserModel userModel)
     {
-        if (NullEmptyUtils.isNullorEmpty(userBean.getUserId()) && !NullEmptyUtils.isNullorEmpty(userBean.getEmail()))
-        {
+        if (!NullEmptyUtils.isNullorEmpty(userBean.getEmail()))
             userModel.setEmail(userBean.getEmail());
-            userModel.setUserName(userBean.getEmail().substring(0, userBean.getEmail().indexOf('@')));
-        }
-        else if (!NullEmptyUtils.isNullorEmpty(userBean.getEmail()))
-        {
-            userModel.setEmail(userBean.getEmail());
-        }
-
-        if(!NullEmptyUtils.isNullorEmpty(userBean.getName()))
+        if (!NullEmptyUtils.isNullorEmpty(userBean.getPhone()))
+            userModel.setPhone(userBean.getPhone());
+        if (!NullEmptyUtils.isNullorEmpty(userBean.getName()))
             userModel.setUserName(userBean.getName());
 
         if (NullEmptyUtils.isNullorEmpty(userBean.getUserId()))
-        {
             userModel.setCreatedDate(new Timestamp(DateUtil.convertToUTC(System.currentTimeMillis())));
-            userModel.setActive(false);
-        }
 
-        if (!NullEmptyUtils.isNullorEmpty(userBean.getUserId()))
         userModel.setModifiedDate(new Timestamp(DateUtil.convertToUTC(System.currentTimeMillis())));
+        userModel.setActive(true);
+
         return userModel;
     }
 
@@ -204,15 +185,17 @@ public class UserServiceImpl implements UserService {
                         HttpStatus.BAD_REQUEST);
 
             UserModel userModel = userModelOptional.get();
-            //resetTokenGeneration.sendForgotPasswordMail(userModel);
+            otpGeneration.generateOTP(userModel.getEmail(), userModel.getId());
         }
         catch (DataException e)
         {
+            e.printStackTrace();
             throw e;
 
         }
         catch (Exception e) {
             LOGGER.error(e.getMessage());
+            e.printStackTrace();
             throw new DataException(Constants.EXCEPTION, messageBundleResource.getMessage(Constants.INTERNAL_SERVER_ERROR),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -224,36 +207,34 @@ public class UserServiceImpl implements UserService {
     /**
      * service to compare and set password
      *
-     * @param token    unique token
-     * @param userBean user bean
+     * @param loginBean user bean
      * @throws DataException data exception
      */
     @Override
-    public String setNewPassword(String token, UserBean userBean) throws DataException
+    public String setNewPassword(LoginBean loginBean, int userId) throws DataException
     {
         LOGGER.info("Set password service impl is called - main server");
         try
         {
-            Optional<UserModel> userModelOptional = userRepository.findById(userBean.getUserId());
+            Optional<UserModel> userModelOptional = userRepository.findById(userId);
             ValidationHelper.checkUserById(userModelOptional);
             UserModel userModel = userModelOptional.get();
 
-            if (!(new Timestamp(System.currentTimeMillis())).before(userModel.getTokenExpiryDate()))
-                throw new DataException(Constants.EXCEPTION, messageBundleResource.getMessage(Constants.TOKEN_EXPIRED),
-                        HttpStatus.BAD_REQUEST);
-
-            if (!NullEmptyUtils.isNullorEmpty(userBean.getUserId()))
+            if (cacheService.gettingCache(userModel.getId()).equals("Otp expired"))
             {
-                if (userModel.getId() != userBean.getUserId())
-                    throw new DataException(Constants.EXCEPTION, messageBundleResource.getMessage(Constants.INVALID_USER_DETAILS)
-                            , HttpStatus.BAD_REQUEST);
+                LOGGER.error("otp expired");
+                throw new DataException(Constants.EXCEPTION,
+                        messageBundleResource.getMessage("OTP_EXPIRED"), HttpStatus.BAD_REQUEST);
             }
 
-            if (!NullEmptyUtils.isNullorEmpty(userBean.getPassword()))
-                userModel.setPassword(bCryptPasswordEncoder.encode(userBean.getPassword()));
+            if (loginBean.getOtp().equalsIgnoreCase(cacheService.gettingCache(userModel.getId())))
+            {
+                if (!NullEmptyUtils.isNullorEmpty(loginBean.getPassword()))
+                    userModel.setPassword(bCryptPasswordEncoder.encode(loginBean.getPassword()));
 
-            userModel.setActive(true);
-            userRepository.save(userModel);
+                userModel.setActive(true);
+                userRepository.save(userModel);
+            }
         }
         catch (DataException e)
         {
@@ -287,9 +268,7 @@ public class UserServiceImpl implements UserService {
             Optional<UserModel> optionalUserModel = userRepository.findByIdAndIsActiveTrue(userId);
             ValidationHelper.checkUserById(optionalUserModel);
 
-            Optional<UserModel> userModelOptional = userRepository.findByIdAndIsActiveTrue(userBean.getUserId());
-            ValidationHelper.checkUserById(userModelOptional);
-            UserModel userModel = userModelOptional.get();
+            UserModel userModel = optionalUserModel.get();
             userModel.setModifiedDate(new Timestamp(DateUtil.convertToUTC(System.currentTimeMillis())));
             userModel.setActive(false);
             userRepository.save(userModel);
@@ -308,4 +287,20 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    /**
+     *
+     * @param userId
+     * @return
+     * @throws DataException
+     */
+    @Override
+    public UserBean fetchUser(int userId) throws DataException
+    {
+        Optional<UserModel> optionalUserModel = userRepository.findByIdAndIsActiveTrue(userId);
+        ValidationHelper.checkUserById(optionalUserModel);
+
+        UserModel userModel = optionalUserModel.get();
+
+        return mapUserModelToUserBean(userModel);
+    }
 }
