@@ -1,0 +1,74 @@
+create database parksmart;
+
+use parksmart;
+
+CREATE TABLE IF NOT EXISTS `parksmart`.`ps_user` (
+  `u_id` INT(11) NOT NULL AUTO_INCREMENT,
+  `u_name` VARCHAR(45) NOT NULL,
+  `u_email` VARCHAR(45) NOT NULL,
+  `u_password` VARCHAR(225) NULL DEFAULT NULL,
+  `u_created_date` TIMESTAMP(6) NULL DEFAULT NULL,
+  `u_modified_date` TIMESTAMP(6) NULL DEFAULT NULL,
+  `u_token_expiry_date` TIMESTAMP(6) NULL DEFAULT NULL,
+  `u_refresh_token` VARCHAR(350) NULL DEFAULT NULL,
+  `u_is_active` TINYINT(1) NOT NULL,
+  PRIMARY KEY (`u_id`))
+
+
+CREATE TABLE `parksmart`.`ps_vehicle` (
+  `v_id` INT NOT NULL AUTO_INCREMENT,
+  `v_number` VARCHAR(45) NULL DEFAULT NULL,
+  `v_name` VARCHAR(45) NULL DEFAULT NULL,
+  `v_location` VARCHAR(255) NULL DEFAULT NULL,
+  `u_id` INT NULL DEFAULT NULL,
+  `v_is_active` TINYINT NULL,
+  `v_manufacturer_name` VARCHAR(255) NULL DEFAULT NULL,
+  PRIMARY KEY (`v_id`),
+  INDEX `u_id_idx` (`u_id` ASC),
+  CONSTRAINT `u_id`
+    FOREIGN KEY (`u_id`)
+    REFERENCES `parksmart`.`ps_user` (`u_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+CREATE TABLE `parkSmart`.`ps_parking_area` (
+  `parking_area_id` INT NOT NULL AUTO_INCREMENT,
+  `parking_area_location` VARCHAR(45) NULL,
+  PRIMARY KEY (`parking_area_id`));
+
+ALTER TABLE `parkSmart`.`parking_area`
+ADD COLUMN `parking_area` VARCHAR(45) NULL DEFAULT NULL AFTER `parking_area_location`;
+
+CREATE TABLE `parksmart`.`ps_slot` (
+  `s_id` INT NOT NULL AUTO_INCREMENT,
+  `p_id` INT NULL DEFAULT NULL,
+  `s_location` VARCHAR(255) NULL,
+  PRIMARY KEY (`s_id`),
+  INDEX `fk_p_idk_idx` (`p_id` ASC),
+  CONSTRAINT `fk_p_idk`
+    FOREIGN KEY (`p_id`)
+    REFERENCES `parksmart`.`parking_area` (`parking_area_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+CREATE TABLE `parksmart`.`ps_parking` (
+  `parking_id` INT NOT NULL AUTO_INCREMENT,
+  `v_id` INT NULL DEFAULT NULL,
+  `s_id` INT NULL DEFAULT NULL,
+  `start_time` TIMESTAMP NULL DEFAULT NULL,
+  `end_time` TIMESTAMP NULL DEFAULT NULL,
+  `parking_is_active` TINYINT NULL,
+  `amount` VARCHAR(45) NULL,
+  PRIMARY KEY (`parking_id`),
+  INDEX `fk_ps_parking_1_idx` (`v_id` ASC),
+  INDEX `fk_ps_parking_2_idx` (`s_id` ASC),
+  CONSTRAINT `fk_ps_parking_1`
+    FOREIGN KEY (`v_id`)
+    REFERENCES `parksmart`.`ps_vehicle` (`v_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ps_parking_2`
+    FOREIGN KEY (`s_id`)
+    REFERENCES `parksmart`.`ps_slot` (`s_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);

@@ -92,6 +92,15 @@
             <version>2.6.1</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>5.1.5.RELEASE</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -138,7 +147,6 @@
             </properties>
         </profile>
 
-
         <profile>
             <id>dev</id>
             <activation>
@@ -149,6 +157,4 @@
             </properties>
         </profile>
     </profiles>
-
-
 </project>
