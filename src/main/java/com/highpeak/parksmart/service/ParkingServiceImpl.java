@@ -3,7 +3,9 @@ package com.highpeak.parksmart.service;
 import com.highpeak.parksmart.datastore.model.ParkingModel;
 import com.highpeak.parksmart.exception.DataException;
 import com.highpeak.parksmart.pojo.ParkingBean;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ParkingServiceImpl implements ParkingService
 {
     @Override
