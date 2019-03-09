@@ -1,16 +1,17 @@
-package com.highpeak.parksmart.service;
+package com.highpeak.parksmart.service.impl;
 
 import com.highpeak.parksmart.datastore.model.SlotModel;
 import com.highpeak.parksmart.datastore.repository.SlotRepository;
 import com.highpeak.parksmart.exception.DataException;
 import com.highpeak.parksmart.pojo.SlotBean;
+import com.highpeak.parksmart.service.SlotService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SlotServiceImpl implements  SlotService
+public class SlotServiceImpl implements SlotService
 {
     private static Logger LOGGER = LoggerFactory.getLogger(SlotServiceImpl.class);
 

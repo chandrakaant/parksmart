@@ -1,9 +1,10 @@
-package com.highpeak.parksmart.service;
+package com.highpeak.parksmart.service.impl;
 
 import com.highpeak.parksmart.datastore.model.ParkingAreaModel;
 import com.highpeak.parksmart.datastore.repository.ParkingAreaRepository;
 import com.highpeak.parksmart.exception.DataException;
 import com.highpeak.parksmart.pojo.ParkingAreaBean;
+import com.highpeak.parksmart.service.ParkingAreaService;
 import com.highpeak.parksmart.util.Constants;
 import com.highpeak.parksmart.util.MessageBundleResource;
 import org.slf4j.Logger;

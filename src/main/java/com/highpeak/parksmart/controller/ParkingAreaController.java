@@ -76,7 +76,7 @@ public class ParkingAreaController extends AbstractRestService
     {
         try
         {
-            return buildResponse(parkingAreaService.fetchAllParkingArea(parkingAreaBean));
+            return buildResponse(parkingAreaService.fetchAllParkingArea());
         }
         catch(DataException e)
         {

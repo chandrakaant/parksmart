@@ -1,0 +1,195 @@
+package com.highpeak.parksmart.service.impl;
+
+import com.highpeak.parksmart.controller.VehicleController;
+import com.highpeak.parksmart.datastore.model.UserModel;
+import com.highpeak.parksmart.datastore.model.VehicleModel;
+import com.highpeak.parksmart.datastore.repository.UserRepository;
+import com.highpeak.parksmart.datastore.repository.VehicleRepository;
+import com.highpeak.parksmart.exception.DataException;
+import com.highpeak.parksmart.pojo.VehicleBean;
+import com.highpeak.parksmart.service.VehicleService;
+import com.highpeak.parksmart.util.Constants;
+import com.highpeak.parksmart.util.MessageBundleResource;
+import com.highpeak.parksmart.util.NullEmptyUtils;
+import com.highpeak.parksmart.util.ValidationHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+@Service
+public class VehicleServiceImpl implements VehicleService {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(VehicleController.class);
+
+    @Autowired
+    private VehicleRepository vehicleRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private MessageBundleResource messageBundleResource;
+
+    @Override
+    public VehicleBean addVehicle(VehicleBean vehicleBean, int userId) throws DataException
+    {
+        LOGGER.info("Add vehicle");
+        try
+        {
+            Optional<UserModel> optionalUserModel = userRepository.findByIdAndIsActiveTrue(userId);
+            ValidationHelper.checkUserById(optionalUserModel);
+
+            UserModel userModel = optionalUserModel.get();
+
+            Optional<VehicleModel> vehicleModelOptional = vehicleRepository.findByVehicleNumberAndIsActiveTrue(vehicleBean.getNumber());
+            if (vehicleModelOptional.isPresent())
+                throw new DataException(Constants.EXCEPTION, messageBundleResource.getMessage("Vehicle already exist"),
+                        HttpStatus.BAD_REQUEST);
+
+            VehicleModel vehicleModel = mapVehicleBeanToModel(vehicleBean);
+            vehicleModel.setUserId(userModel.getId());
+            vehicleModel = vehicleRepository.save(vehicleModel);
+            return mapVehicleModelToBean(vehicleModel);
+
+        } catch (DataException e)
+        {
+            e.printStackTrace();
+            throw e;
+
+        } catch (Exception e)
+        {
+            LOGGER.error(e.getMessage());
+            e.printStackTrace();
+            throw new DataException(Constants.EXCEPTION, messageBundleResource.getMessage(Constants.INTERNAL_SERVER_ERROR),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    private VehicleModel mapVehicleBeanToModel(VehicleBean vehicleBean)
+    {
+        VehicleModel vehicleModel = new VehicleModel();
+
+        if (!NullEmptyUtils.isNullorEmpty(vehicleBean.getName()))
+            vehicleModel.setVehicleName(vehicleBean.getName());
+
+        if (!NullEmptyUtils.isNullorEmpty(vehicleBean.getNumber()))
+            vehicleModel.setVehicleNumber(vehicleBean.getNumber());
+
+        if (!NullEmptyUtils.isNullorEmpty(vehicleBean.getManufacturerName()))
+            vehicleModel.setManufacturerName(vehicleBean.getManufacturerName());
+
+        if (!NullEmptyUtils.isNullorEmpty(vehicleBean.getLocation()))
+            vehicleModel.setVehicleLocation(vehicleBean.getLocation());
+
+        vehicleModel.setActive(true);
+        return vehicleModel;
+
+    }
+
+    private VehicleBean mapVehicleModelToBean(VehicleModel vehicleModel)
+    {
+        VehicleBean vehicleBean = new VehicleBean();
+        vehicleBean.setId(vehicleModel.getId());
+        vehicleBean.setLocation(vehicleModel.getVehicleLocation());
+        vehicleBean.setName(vehicleModel.getVehicleName());
+        vehicleBean.setNumber(vehicleModel.getVehicleNumber());
+        return vehicleBean;
+    }
+
+    @Override
+    public VehicleBean updateVehicle(VehicleBean vehicleBean, int userId) throws DataException
+    {
+        LOGGER.info("Update vehicle");
+        try
+        {
+            Optional<UserModel> optionalUserModel = userRepository.findByIdAndIsActiveTrue(userId);
+            ValidationHelper.checkUserById(optionalUserModel);
+
+            Optional<VehicleModel> vehicleModelOptional = vehicleRepository.findByIdAndIsActiveTrue(vehicleBean.getId());
+            if (!vehicleModelOptional.isPresent())
+                throw new DataException(Constants.EXCEPTION, messageBundleResource.getMessage("Vehicle does not exist"),
+                        HttpStatus.BAD_REQUEST);
+
+            VehicleModel vehicleModel = vehicleModelOptional.get();
+            vehicleModel.setActive(false);
+            vehicleRepository.save(vehicleModel);
+            return mapVehicleModelToBean(vehicleModel);
+
+        }
+        catch (DataException e)
+        {
+            throw e;
+
+        }
+        catch (Exception e)
+        {
+            LOGGER.error(e.getMessage());
+            throw new DataException(Constants.EXCEPTION, messageBundleResource.getMessage(Constants.INTERNAL_SERVER_ERROR),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public void deleteVehicle(VehicleBean vehicleBean, int userId) throws DataException
+    {
+        LOGGER.info("Delete vehicle");
+        try
+        {
+            Optional<UserModel> optionalUserModel = userRepository.findByIdAndIsActiveTrue(userId);
+            ValidationHelper.checkUserById(optionalUserModel);
+
+            Optional<VehicleModel> vehicleModelOptional = vehicleRepository.findByIdAndIsActiveTrue(vehicleBean.getId());
+            if (!vehicleModelOptional.isPresent())
+                throw new DataException(Constants.EXCEPTION, messageBundleResource.getMessage("Vehicle does not exist"),
+                        HttpStatus.BAD_REQUEST);
+
+            VehicleModel vehicleModel = mapVehicleBeanToModel(vehicleBean);
+            vehicleBean.setActive(false);
+            vehicleRepository.save(vehicleModel);
+        }
+        catch (DataException e)
+        {
+            throw e;
+
+        }
+        catch (Exception e)
+        {
+            LOGGER.error(e.getMessage());
+            throw new DataException(Constants.EXCEPTION, messageBundleResource.getMessage(Constants.INTERNAL_SERVER_ERROR),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public VehicleBean fetchVehicle(VehicleBean vehicleBean, int userId) throws DataException
+    {
+        try
+        {
+            Optional<UserModel> optionalUserModel = userRepository.findByIdAndIsActiveTrue(userId);
+            ValidationHelper.checkUserById(optionalUserModel);
+
+            Optional<VehicleModel> vehicleModelOptional = vehicleRepository.findByIdAndIsActiveTrue(vehicleBean.getId());
+            if (!vehicleModelOptional.isPresent())
+                throw new DataException(Constants.EXCEPTION, messageBundleResource.getMessage("Vehicle does not exist"),
+                        HttpStatus.BAD_REQUEST);
+
+            return mapVehicleModelToBean(vehicleModelOptional.get());
+        }
+        catch (DataException e)
+        {
+            throw e;
+
+        }
+        catch (Exception e)
+        {
+            LOGGER.error(e.getMessage());
+            throw new DataException(Constants.EXCEPTION, messageBundleResource.getMessage(Constants.INTERNAL_SERVER_ERROR),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+}
