@@ -88,4 +88,5 @@ public class Constants {
     public static final String PARKING_AREA_DOESNT_EXIST ="parksmart.error.parking.area.doesnt.exist";
     public static final String EMPTY_FIELD = "parksmart.error.empty.field";
     public static final String SLOT_DOESNT_EXIST = "parksmart.error.slot.doesnt.exist";
+    public static final String VEHICLE_DOESNT_EXIST = "parksmart.error.vehicle.doesnt.exist";
 }

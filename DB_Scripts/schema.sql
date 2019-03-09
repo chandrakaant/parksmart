@@ -63,7 +63,7 @@ CREATE TABLE `parksmart`.`ps_vehicle_details` (
   `v_name` VARCHAR(45) NULL DEFAULT NULL,
   `v_location` VARCHAR(255) NULL DEFAULT NULL,
   `v_user_id` INT NOT NULL,
-  `v_is_active` TINYINT NULL,
+  `v_is_active` TINYINT(1) NULL,
   `v_manufacturer_name` VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY (`v_id`))
 
