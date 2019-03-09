@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.ws.Response;
+
 @RestController
 @RequestMapping("/rest/vehicle")
 public class VehicleController extends AbstractRestService{
@@ -82,6 +84,25 @@ public class VehicleController extends AbstractRestService{
             return buildSuccessMessage("Vehicle Deleted Successfully");
         }
         catch (final DataException e)
+        {
+            return buildError(e);
+        }
+    }
+
+    /**
+     * Service To Fetch Vehicle By User Id
+     * @param vehicleBean
+     * @return
+     */
+
+    @PostMapping("/fetchVehicleByUserId")
+    public ResponseEntity<?> fetchVehicleByUserId(@RequestBody VehicleBean vehicleBean)
+    {
+        try
+        {
+            return buildResponse(vehicleService.fetchVehicleByUserId(vehicleBean));
+        }
+        catch(DataException e)
         {
             return buildError(e);
         }

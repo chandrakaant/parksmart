@@ -7,7 +7,16 @@ public class VehicleBean {
     private String number;
     private String location;
     private String manufacturerName;
+    private Integer userId;
     private boolean isActive;
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
 
     public int getId()
     {
