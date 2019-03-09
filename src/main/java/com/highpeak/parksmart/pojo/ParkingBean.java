@@ -1,14 +1,12 @@
 package com.highpeak.parksmart.pojo;
 
-import java.sql.Timestamp;
-
 public class ParkingBean
 {
     private int parkingId;
     private Integer vehicleId;
     private Integer slotId;
-    private Timestamp startTime;
-    private Timestamp endTime;
+    private Long startTime;
+    private Long endTime;
     private boolean parkingIsActive;
     private String amount;
 
@@ -36,19 +34,19 @@ public class ParkingBean
         this.slotId = slotId;
     }
 
-    public Timestamp getStartTime() {
+    public Long getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Timestamp startTime) {
+    public void setStartTime(Long startTime) {
         this.startTime = startTime;
     }
 
-    public Timestamp getEndTime() {
+    public Long getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Timestamp endTime) {
+    public void setEndTime(Long endTime) {
         this.endTime = endTime;
     }
 
