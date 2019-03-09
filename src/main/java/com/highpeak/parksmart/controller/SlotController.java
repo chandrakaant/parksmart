@@ -46,4 +46,44 @@ public class SlotController extends AbstractRestService
             return buildError(e);
         }
     }
+
+    /**
+     * Service to fetch a slot by id
+     *
+     * @param slotBean
+     * @return
+     */
+
+    @PostMapping("/fetchSlotById")
+    public ResponseEntity<?> fetchSlotById(@RequestBody SlotBean slotBean)
+    {
+        try
+        {
+            return buildResponse(slotService.fetchSlotById(slotBean));
+        }
+        catch(DataException e)
+        {
+            return buildError(e);
+        }
+    }
+
+    /**
+     * Service to fetch all slots in a parking area
+     *
+     * @param slotBean
+     * @return
+     */
+
+    @PostMapping("/fetchAllSlot")
+    public ResponseEntity<?> fetchAllSlot(@RequestBody SlotBean slotBean)
+    {
+        try
+        {
+            return buildResponse(slotService.fetchAllSlot(slotBean));
+        }
+        catch(DataException e)
+        {
+            return buildError(e);
+        }
+    }
 }
