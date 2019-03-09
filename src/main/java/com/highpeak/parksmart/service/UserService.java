@@ -1,7 +1,5 @@
 package com.highpeak.parksmart.service;
 
-
-import com.highpeak.parksmart.datastore.model.UserModel;
 import com.highpeak.parksmart.exception.DataException;
 import com.highpeak.parksmart.pojo.LoginBean;
 import com.highpeak.parksmart.pojo.UserBean;

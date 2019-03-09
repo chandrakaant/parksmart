@@ -4,7 +4,8 @@ public class SlotBean
 {
     private int slotId;
     private Integer parkingAreaId;
-    private String slotLocation;
+    private Double slotLat;
+    private Double slotLong;
 
     public int getSlotId() {
         return slotId;
@@ -22,11 +23,19 @@ public class SlotBean
         this.parkingAreaId = parkingAreaId;
     }
 
-    public String getSlotLocation() {
-        return slotLocation;
+    public Double getSlotLat() {
+        return slotLat;
     }
 
-    public void setSlotLocation(String slotLocation) {
-        this.slotLocation = slotLocation;
+    public void setSlotLat(Double slotLat) {
+        this.slotLat = slotLat;
+    }
+
+    public Double getSlotLong() {
+        return slotLong;
+    }
+
+    public void setSlotLong(Double slotLong) {
+        this.slotLong = slotLong;
     }
 }

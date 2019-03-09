@@ -17,7 +17,22 @@ public interface ParkingAreaService
 
     ParkingAreaBean registerParkingArea(ParkingAreaBean parkingAreaBean) throws DataException;
 
+    /**
+     * service to fetch parking area by id
+     *
+     * @param parkingAreaBean
+     * @return
+     * @throws DataException
+     */
+
     ParkingAreaBean fetchParkingArea(ParkingAreaBean parkingAreaBean) throws DataException;
+
+    /**
+     * service to fetch all
+     *
+     * @return
+     * @throws DataException
+     */
 
     List<ParkingAreaBean> fetchAllParkingArea() throws DataException;
 

@@ -14,8 +14,22 @@ public class SlotModel
     @Column(name="p_id")
     private Integer parkingAreaId;
 
-    @Column(name="s_location")
-    private String slotLocation;
+    @Column(name="s_lat")
+    private Double slotLat;
+
+    @Column(name="s_long")
+    private Double slotLong;
+
+    @Column(name="s_active")
+    private boolean slotActive;
+
+    public boolean isSlotActive() {
+        return slotActive;
+    }
+
+    public void setSlotActive(boolean slotActive) {
+        this.slotActive = slotActive;
+    }
 
     public int getSlotId() {
         return slotId;
@@ -33,11 +47,19 @@ public class SlotModel
         this.parkingAreaId = parkingAreaId;
     }
 
-    public String getSlotLocation() {
-        return slotLocation;
+    public Double getSlotLat() {
+        return slotLat;
     }
 
-    public void setSlotLocation(String slotLocation) {
-        this.slotLocation = slotLocation;
+    public void setSlotLat(Double slotLat) {
+        this.slotLat = slotLat;
+    }
+
+    public Double getSlotLong() {
+        return slotLong;
+    }
+
+    public void setSlotLong(Double slotLong) {
+        this.slotLong = slotLong;
     }
 }
