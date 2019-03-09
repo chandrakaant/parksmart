@@ -1,7 +1,8 @@
-package com.highpeak.parksmart.service;
+package com.highpeak.parksmart.service.impl;
 
 import com.highpeak.parksmart.datastore.model.UserModel;
 import com.highpeak.parksmart.datastore.repository.UserRepository;
+import com.highpeak.parksmart.datastore.repository.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,6 +26,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserRoleRepository userRoleRepository;
+
     /* (non-Javadoc)
      * 
      * @see org.springframework.security.core.userdetails.UserDetailsService#
@@ -36,14 +40,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Optional<UserModel> applicationUser = userRepository
                 .findByEmailAndIsActiveTrue(emailId);
 
-
         if( !applicationUser.isPresent() )
         {
             throw new UsernameNotFoundException(emailId);
         }
         HashSet<GrantedAuthority> authorities = new HashSet<>();
 
-//        authorities.add(new SimpleGrantedAuthority(userRoleRepository.getRoleByUserProfileId(applicationUser.get().getId())));
+        authorities.add(new SimpleGrantedAuthority(userRoleRepository.getRoleByUserProfileId(applicationUser.get().getId())));
         return new User(applicationUser.get().getEmail(), applicationUser.get().getPassword(), authorities);
     }
 }

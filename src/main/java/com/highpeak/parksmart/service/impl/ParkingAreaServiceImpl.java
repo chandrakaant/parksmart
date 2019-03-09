@@ -1,11 +1,13 @@
-package com.highpeak.parksmart.service;
+package com.highpeak.parksmart.service.impl;
 
 import com.highpeak.parksmart.datastore.model.ParkingAreaModel;
 import com.highpeak.parksmart.datastore.repository.ParkingAreaRepository;
 import com.highpeak.parksmart.exception.DataException;
 import com.highpeak.parksmart.pojo.ParkingAreaBean;
+import com.highpeak.parksmart.service.ParkingAreaService;
 import com.highpeak.parksmart.util.Constants;
 import com.highpeak.parksmart.util.MessageBundleResource;
+import com.highpeak.parksmart.util.NullEmptyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +40,17 @@ public class ParkingAreaServiceImpl implements ParkingAreaService
     @Override
     public ParkingAreaBean registerParkingArea(ParkingAreaBean parkingAreaBean) throws DataException
     {
+        if(NullEmptyUtils.isNullorEmpty(parkingAreaBean.getParkingAreaLat()) && NullEmptyUtils.isNullorEmpty(parkingAreaBean.getParkingAreaLong()))
+        {
+            throw new DataException(Constants.EXCEPTION,messageBundle.getMessage(Constants.EMPTY_FIELD),HttpStatus.BAD_REQUEST);
+        }
+
         ParkingAreaModel parkingAreaModel = new ParkingAreaModel();
 
         parkingAreaModel.setParkingArea(parkingAreaBean.getParkingArea());
-        parkingAreaModel.setParkingAreaLocation(parkingAreaBean.getParkingAreaLocation());
+        parkingAreaModel.setParkingAreaLat(parkingAreaBean.getParkingAreaLat());
+        parkingAreaModel.setParkingAreaLong(parkingAreaBean.getParkingAreaLong());
+        parkingAreaModel.setParkingAreaIsActive(true);
 
         return setParkingAreaBean(parkingAreaRepository.save(parkingAreaModel));
     }
@@ -57,7 +66,7 @@ public class ParkingAreaServiceImpl implements ParkingAreaService
     @Override
     public ParkingAreaBean fetchParkingArea(ParkingAreaBean parkingAreaBean) throws DataException
     {
-        Optional<ParkingAreaModel> parkingAreaModel = parkingAreaRepository.findByParkingAreaId(parkingAreaBean.getParkingAreaId());
+        Optional<ParkingAreaModel> parkingAreaModel = parkingAreaRepository.findByParkingAreaIdAndParkingAreaIsActiveTrue(parkingAreaBean.getParkingAreaId());
 
         if(!parkingAreaModel.isPresent())
         {
@@ -67,13 +76,20 @@ public class ParkingAreaServiceImpl implements ParkingAreaService
         return setParkingAreaBean(parkingAreaModel.get());
     }
 
+    /**
+     * service to fetch all
+     *
+     * @return
+     * @throws DataException
+     */
+
     @Override
     public List<ParkingAreaBean> fetchAllParkingArea() throws DataException {
 
         List<ParkingAreaBean> parkingAreaBeanList = new ArrayList<>();
         List<ParkingAreaModel> parkingAreaModelList = new ArrayList<>();
 
-        parkingAreaModelList = parkingAreaRepository.findAll();
+        parkingAreaModelList = parkingAreaRepository.findByParkingAreaIsActiveTrue();
 
         for(ParkingAreaModel parkingAreaModel : parkingAreaModelList)
         {
@@ -96,7 +112,8 @@ public class ParkingAreaServiceImpl implements ParkingAreaService
 
         parkingAreaBean.setParkingAreaId(parkingAreaModel.getParkingAreaId());
         parkingAreaBean.setParkingArea(parkingAreaModel.getParkingArea());
-        parkingAreaBean.setParkingAreaLocation(parkingAreaModel.getParkingAreaLocation());
+        parkingAreaBean.setParkingAreaLat(parkingAreaModel.getParkingAreaLat());
+        parkingAreaBean.setParkingAreaLong(parkingAreaModel.getParkingAreaLong());
 
         return parkingAreaBean;
     }
