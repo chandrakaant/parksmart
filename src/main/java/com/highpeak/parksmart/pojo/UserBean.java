@@ -13,7 +13,7 @@ public class UserBean {
     private Timestamp modifiedDate;
     private int role;
     private boolean isActive;
-    private long phone;
+    private String phone;
     private String location;
 
     public String getConfirmPassword()
@@ -26,12 +26,12 @@ public class UserBean {
         this.confirmPassword = confirmPassword;
     }
 
-    public long getPhone()
+    public String getPhone()
     {
         return phone;
     }
 
-    public void setPhone(long phone)
+    public void setPhone(String phone)
     {
         this.phone = phone;
     }

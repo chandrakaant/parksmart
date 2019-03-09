@@ -37,17 +37,17 @@ public class UserModel {
     private boolean isActive;
 
     @Column(name = "u_phone")
-    private long phone;
+    private String phone;
 
     @Column(name = "u_location")
     private String location;
 
-    public long getPhone()
+    public String getPhone()
     {
         return phone;
     }
 
-    public void setPhone(long phone)
+    public void setPhone(String phone)
     {
         this.phone = phone;
     }
