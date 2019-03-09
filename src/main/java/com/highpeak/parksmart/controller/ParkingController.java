@@ -66,7 +66,7 @@ public class ParkingController extends AbstractRestService
     }
 
     /**
-     * Service to stop parking
+     * Service to find car
      *
      * @param parkingBean
      * @return
