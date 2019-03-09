@@ -46,16 +46,26 @@ CREATE TABLE `parksmart`.`ps_vehicle` (
   `v_number` VARCHAR(45) NULL DEFAULT NULL,
   `v_name` VARCHAR(45) NULL DEFAULT NULL,
   `v_location` VARCHAR(255) NULL DEFAULT NULL,
-  `u_id` INT NULL DEFAULT NULL,
+  `v_user_id` INT NULL DEFAULT NULL,
   `v_is_active` TINYINT NULL,
   `v_manufacturer_name` VARCHAR(255) NULL DEFAULT NULL,
   PRIMARY KEY (`v_id`),
   INDEX `u_id_idx` (`u_id` ASC),
-  CONSTRAINT `u_id`
-    FOREIGN KEY (`u_id`)
+  CONSTRAINT `v_user_id`
+    FOREIGN KEY (`v_user_id`)
     REFERENCES `parksmart`.`ps_user` (`u_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
+
+CREATE TABLE `parksmart`.`ps_vehicle_details` (
+  `v_id` INT NOT NULL AUTO_INCREMENT,
+  `v_number` VARCHAR(45) NULL DEFAULT NULL,
+  `v_name` VARCHAR(45) NULL DEFAULT NULL,
+  `v_location` VARCHAR(255) NULL DEFAULT NULL,
+  `v_user_id` INT NOT NULL,
+  `v_is_active` TINYINT NULL,
+  `v_manufacturer_name` VARCHAR(255) NULL DEFAULT NULL,
+  PRIMARY KEY (`v_id`))
 
 CREATE TABLE `parksmart`.`ps_parking_area` (
   `parking_area_id` INT NOT NULL AUTO_INCREMENT,

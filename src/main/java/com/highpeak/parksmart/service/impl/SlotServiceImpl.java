@@ -126,4 +126,3 @@ public class SlotServiceImpl implements SlotService
         return slotBean;
     }
 }
-
