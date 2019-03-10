@@ -15,10 +15,55 @@ public class UserBean {
     private boolean isActive;
     private String phone;
     private String location;
+    private String vehicleName;
+    private String number;
+    private String vehicleLocation;
+    private String manufacturerName;
+
+    public String getNumber()
+    {
+        return number;
+    }
+
+    public void setNumber(String number)
+    {
+        this.number = number;
+    }
+
+    public String getVehicleLocation()
+    {
+        return vehicleLocation;
+    }
+
+    public void setVehicleLocation(String vehicleLocation)
+    {
+        this.vehicleLocation = vehicleLocation;
+    }
+
+    public String getManufacturerName()
+    {
+        return manufacturerName;
+    }
+
+    public void setManufacturerName(String manufacturerName)
+    {
+        this.manufacturerName = manufacturerName;
+    }
+
 
     public String getConfirmPassword()
     {
         return confirmPassword;
+    }
+
+    public String getVehicleName()
+    {
+        return vehicleName;
+    }
+
+    public void setVehicleName(String vehicleName)
+    {
+        this.vehicleName = vehicleName;
     }
 
     public void setConfirmPassword(String confirmPassword)

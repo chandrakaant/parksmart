@@ -107,7 +107,6 @@ public class UserController extends AbstractRestService {
     /**
      * controller to set password
      *
-     * @param authorization    string token
      * @param loginBean bean
      * @return object
      */
@@ -115,7 +114,7 @@ public class UserController extends AbstractRestService {
     @ApiOperation( value = "set password", code = 200, produces = "application/json", notes = "Rest API to set new password" ) @ApiResponses( value = {
             @ApiResponse( code = 200, message = RestRequestHeader.SUCCESS_MESSAGE, response = ResponseEntity.class ),
             @ApiResponse( code = 400, message = RestRequestHeader.BAD_REQUEST_ERROR, response = DataException.class ) } )
-    public ResponseEntity<?> setNewPassword(@RequestBody LoginBean loginBean, @RequestHeader("Authorization") String authorization)
+    public ResponseEntity<?> setNewPassword(@RequestBody LoginBean loginBean)
     {
         try
         {

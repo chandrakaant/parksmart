@@ -63,7 +63,7 @@ public class OtpGeneration {
         // Creating 6 digit otp
 
         Random random = new Random();
-        int otpLength = 6;
+        int otpLength = 4;
         char[] otp = new char[otpLength];
         logger.info("generating otp");
         for (int i = 0; i < otpLength; i++) {
