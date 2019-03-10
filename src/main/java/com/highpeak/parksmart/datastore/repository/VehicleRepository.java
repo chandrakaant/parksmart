@@ -16,5 +16,5 @@ public interface VehicleRepository extends PagingAndSortingRepository<VehicleMod
 
     Optional<VehicleModel> findByIdAndIsActiveTrue(int id);
 
-    Optional<VehicleModel> findByUserId(int userId);
+    Optional<VehicleModel> findByUserIdAndIsActiveTrue(int userId);
 }

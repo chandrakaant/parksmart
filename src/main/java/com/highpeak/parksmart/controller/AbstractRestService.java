@@ -50,6 +50,7 @@ public class AbstractRestService {
     protected <T> ResponseEntity<UIResponse<T>> buildResponse(final T t) {
         final UIResponse<T> uiResponse = new UIResponse<T>(t);
         uiResponse.setStatus(HttpStatus.OK.value());
+        uiResponse.setMessage("SUCCESS");
         return new ResponseEntity<UIResponse<T>>(uiResponse, HttpStatus.OK);
     }
 

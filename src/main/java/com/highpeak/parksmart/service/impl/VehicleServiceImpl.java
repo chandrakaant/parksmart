@@ -98,6 +98,7 @@ public class VehicleServiceImpl implements VehicleService {
         vehicleBean.setLocation(vehicleModel.getVehicleLocation());
         vehicleBean.setName(vehicleModel.getVehicleName());
         vehicleBean.setNumber(vehicleModel.getVehicleNumber());
+        vehicleBean.setManufacturerName(vehicleModel.getManufacturerName());
         return vehicleBean;
     }
 
@@ -208,7 +209,7 @@ public class VehicleServiceImpl implements VehicleService {
             throw new DataException(Constants.EXCEPTION,messageBundleResource.getMessage(Constants.EMPTY_FIELD), HttpStatus.BAD_REQUEST);
         }
 
-        Optional<VehicleModel> vehicleModel = vehicleRepository.findByUserId(vehicleBean.getUserId());
+        Optional<VehicleModel> vehicleModel = vehicleRepository.findByUserIdAndIsActiveTrue(vehicleBean.getUserId());
 
         if(!vehicleModel.isPresent())
         {

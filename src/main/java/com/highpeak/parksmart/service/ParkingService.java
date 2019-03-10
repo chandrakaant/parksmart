@@ -5,9 +5,9 @@ import com.highpeak.parksmart.pojo.ParkingBean;
 
 public interface ParkingService
 {
-    ParkingBean startParking(ParkingBean parkingBean) throws DataException;
+    ParkingBean startParking(ParkingBean parkingBean, int userId) throws DataException;
 
-    ParkingBean stopParking(ParkingBean parkingBean) throws DataException;
+    ParkingBean stopParking(ParkingBean parkingBean, int userId) throws DataException;
 
-    ParkingBean findCar(ParkingBean parkingBean) throws DataException;
+    ParkingBean findCar(ParkingBean parkingBean, int userId) throws DataException;
 }

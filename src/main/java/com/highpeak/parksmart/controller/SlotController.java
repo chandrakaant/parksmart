@@ -10,10 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/rest/slot")
@@ -35,11 +32,11 @@ public class SlotController extends AbstractRestService
      */
 
     @PostMapping("/registerSlot")
-    public ResponseEntity<?> registerSlot(@RequestBody SlotBean slotBean)
+    public ResponseEntity<?> registerSlot(@RequestBody SlotBean slotBean, @RequestHeader("Authorization") String authorization)
     {
         try
         {
-            return buildResponse(slotService.registerSlot(slotBean));
+            return buildResponse(slotService.registerSlot(slotBean, Integer.parseInt(getLoggedInUser().getPrincipal().toString())));
         }
         catch(DataException e)
         {
@@ -55,11 +52,11 @@ public class SlotController extends AbstractRestService
      */
 
     @PostMapping("/fetchSlotById")
-    public ResponseEntity<?> fetchSlotById(@RequestBody SlotBean slotBean)
+    public ResponseEntity<?> fetchSlotById(@RequestBody SlotBean slotBean, @RequestHeader("Authorization") String authorization)
     {
         try
         {
-            return buildResponse(slotService.fetchSlotById(slotBean));
+            return buildResponse(slotService.fetchSlotById(slotBean, Integer.parseInt(getLoggedInUser().getPrincipal().toString())));
         }
         catch(DataException e)
         {
@@ -75,11 +72,11 @@ public class SlotController extends AbstractRestService
      */
 
     @PostMapping("/fetchAllSlot")
-    public ResponseEntity<?> fetchAllSlot(@RequestBody SlotBean slotBean)
+    public ResponseEntity<?> fetchAllSlot(@RequestBody SlotBean slotBean, @RequestHeader("Authorization") String authorization)
     {
         try
         {
-            return buildResponse(slotService.fetchAllSlot(slotBean));
+            return buildResponse(slotService.fetchAllSlot(slotBean, Integer.parseInt(getLoggedInUser().getPrincipal().toString())));
         }
         catch(DataException e)
         {

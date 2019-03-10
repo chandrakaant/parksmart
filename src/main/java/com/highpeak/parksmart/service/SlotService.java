@@ -14,7 +14,7 @@ public interface SlotService
      * @return
      */
 
-    SlotBean registerSlot(SlotBean slotBean) throws DataException;
+    SlotBean registerSlot(SlotBean slotBean, int userId) throws DataException;
 
     /**
      * Service to fetch a slot by id
@@ -23,7 +23,7 @@ public interface SlotService
      * @return
      */
 
-    SlotBean fetchSlotById(SlotBean slotBean) throws DataException;
+    SlotBean fetchSlotById(SlotBean slotBean, int userId) throws DataException;
 
     /**
      * Service to fetch all slots in a parking area
@@ -32,5 +32,5 @@ public interface SlotService
      * @return
      */
 
-    List<SlotBean> fetchAllSlot(SlotBean slotBean) throws DataException;
+    List<SlotBean> fetchAllSlot(SlotBean slotBean, int userId) throws DataException;
 }
