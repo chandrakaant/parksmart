@@ -1,13 +1,16 @@
 package com.highpeak.parksmart.service.impl;
 
 import com.highpeak.parksmart.datastore.model.ParkingAreaModel;
+import com.highpeak.parksmart.datastore.model.UserModel;
 import com.highpeak.parksmart.datastore.repository.ParkingAreaRepository;
+import com.highpeak.parksmart.datastore.repository.UserRepository;
 import com.highpeak.parksmart.exception.DataException;
 import com.highpeak.parksmart.pojo.ParkingAreaBean;
 import com.highpeak.parksmart.service.ParkingAreaService;
 import com.highpeak.parksmart.util.Constants;
 import com.highpeak.parksmart.util.MessageBundleResource;
 import com.highpeak.parksmart.util.NullEmptyUtils;
+import com.highpeak.parksmart.util.ValidationHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +30,10 @@ public class ParkingAreaServiceImpl implements ParkingAreaService
     ParkingAreaRepository parkingAreaRepository;
 
     @Autowired
-    MessageBundleResource messageBundle;
+    MessageBundleResource messageBundleResource;
+
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * service to store parking area details
@@ -38,21 +44,39 @@ public class ParkingAreaServiceImpl implements ParkingAreaService
      */
 
     @Override
-    public ParkingAreaBean registerParkingArea(ParkingAreaBean parkingAreaBean) throws DataException
+    public ParkingAreaBean registerParkingArea(ParkingAreaBean parkingAreaBean, int userId) throws DataException
     {
-        if(NullEmptyUtils.isNullorEmpty(parkingAreaBean.getParkingAreaLat()) && NullEmptyUtils.isNullorEmpty(parkingAreaBean.getParkingAreaLong()))
+        try
         {
-            throw new DataException(Constants.EXCEPTION,messageBundle.getMessage(Constants.EMPTY_FIELD),HttpStatus.BAD_REQUEST);
+            Optional<UserModel> userModelOptional = userRepository.findById(userId);
+            ValidationHelper.checkUserById(userModelOptional);
+
+            if(NullEmptyUtils.isNullorEmpty(parkingAreaBean.getParkingAreaLat()) && NullEmptyUtils.isNullorEmpty(parkingAreaBean.getParkingAreaLong()))
+            {
+                throw new DataException(Constants.EXCEPTION,messageBundleResource.getMessage(Constants.EMPTY_FIELD),HttpStatus.BAD_REQUEST);
+            }
+
+            ParkingAreaModel parkingAreaModel = new ParkingAreaModel();
+
+            parkingAreaModel.setParkingArea(parkingAreaBean.getParkingArea());
+            parkingAreaModel.setParkingAreaLat(parkingAreaBean.getParkingAreaLat());
+            parkingAreaModel.setParkingAreaLong(parkingAreaBean.getParkingAreaLong());
+            parkingAreaModel.setParkingAreaIsActive(true);
+
+            return setParkingAreaBean(parkingAreaRepository.save(parkingAreaModel));
+
         }
+        catch (DataException e)
+        {
+            throw e;
 
-        ParkingAreaModel parkingAreaModel = new ParkingAreaModel();
-
-        parkingAreaModel.setParkingArea(parkingAreaBean.getParkingArea());
-        parkingAreaModel.setParkingAreaLat(parkingAreaBean.getParkingAreaLat());
-        parkingAreaModel.setParkingAreaLong(parkingAreaBean.getParkingAreaLong());
-        parkingAreaModel.setParkingAreaIsActive(true);
-
-        return setParkingAreaBean(parkingAreaRepository.save(parkingAreaModel));
+        }
+        catch (Exception e)
+        {
+            LOGGER.error(e.getMessage());
+            throw new DataException(Constants.EXCEPTION, messageBundleResource.getMessage(Constants.INTERNAL_SERVER_ERROR),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -64,16 +88,35 @@ public class ParkingAreaServiceImpl implements ParkingAreaService
      */
 
     @Override
-    public ParkingAreaBean fetchParkingArea(ParkingAreaBean parkingAreaBean) throws DataException
+    public ParkingAreaBean fetchParkingArea(ParkingAreaBean parkingAreaBean, int userId) throws DataException
     {
-        Optional<ParkingAreaModel> parkingAreaModel = parkingAreaRepository.findByParkingAreaIdAndParkingAreaIsActiveTrue(parkingAreaBean.getParkingAreaId());
 
-        if(!parkingAreaModel.isPresent())
+        try
         {
-            throw new DataException(Constants.EXCEPTION,messageBundle.getMessage(Constants.PARKING_AREA_DOESNT_EXIST), HttpStatus.BAD_REQUEST);
-        }
+            Optional<UserModel> userModelOptional = userRepository.findById(userId);
+            ValidationHelper.checkUserById(userModelOptional);
 
-        return setParkingAreaBean(parkingAreaModel.get());
+            Optional<ParkingAreaModel> parkingAreaModel = parkingAreaRepository.findByParkingAreaIdAndParkingAreaIsActiveTrue(parkingAreaBean.getParkingAreaId());
+
+            if(!parkingAreaModel.isPresent())
+            {
+                throw new DataException(Constants.EXCEPTION,messageBundleResource.getMessage(Constants.PARKING_AREA_DOESNT_EXIST), HttpStatus.BAD_REQUEST);
+            }
+
+            return setParkingAreaBean(parkingAreaModel.get());
+
+        }
+        catch (DataException e)
+        {
+            throw e;
+
+        }
+        catch (Exception e)
+        {
+            LOGGER.error(e.getMessage());
+            throw new DataException(Constants.EXCEPTION, messageBundleResource.getMessage(Constants.INTERNAL_SERVER_ERROR),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -84,19 +127,37 @@ public class ParkingAreaServiceImpl implements ParkingAreaService
      */
 
     @Override
-    public List<ParkingAreaBean> fetchAllParkingArea() throws DataException {
+    public List<ParkingAreaBean> fetchAllParkingArea(int userId) throws DataException {
 
-        List<ParkingAreaBean> parkingAreaBeanList = new ArrayList<>();
-        List<ParkingAreaModel> parkingAreaModelList = new ArrayList<>();
-
-        parkingAreaModelList = parkingAreaRepository.findByParkingAreaIsActiveTrue();
-
-        for(ParkingAreaModel parkingAreaModel : parkingAreaModelList)
+        try
         {
-            parkingAreaBeanList.add(setParkingAreaBean(parkingAreaModel));
-        }
+            Optional<UserModel> userModelOptional = userRepository.findById(userId);
+            ValidationHelper.checkUserById(userModelOptional);
 
-        return parkingAreaBeanList;
+            List<ParkingAreaBean> parkingAreaBeanList = new ArrayList<>();
+            List<ParkingAreaModel> parkingAreaModelList = new ArrayList<>();
+
+            parkingAreaModelList = parkingAreaRepository.findByParkingAreaIsActiveTrue();
+
+            for(ParkingAreaModel parkingAreaModel : parkingAreaModelList)
+            {
+                parkingAreaBeanList.add(setParkingAreaBean(parkingAreaModel));
+            }
+
+            return parkingAreaBeanList;
+
+        }
+        catch (DataException e)
+        {
+            throw e;
+
+        }
+        catch (Exception e)
+        {
+            LOGGER.error(e.getMessage());
+            throw new DataException(Constants.EXCEPTION, messageBundleResource.getMessage(Constants.INTERNAL_SERVER_ERROR),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**

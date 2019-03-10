@@ -2,8 +2,15 @@ package com.highpeak.parksmart.service.impl;
 
 import com.highpeak.parksmart.datastore.model.ParkingModel;
 import com.highpeak.parksmart.datastore.model.SlotModel;
+import com.highpeak.parksmart.datastore.model.UserModel;
 import com.highpeak.parksmart.datastore.repository.ParkingRepository;
 import com.highpeak.parksmart.datastore.repository.SlotRepository;
+import com.highpeak.parksmart.datastore.model.UserModel;
+import com.highpeak.parksmart.datastore.repository.ParkingRepository;
+import com.highpeak.parksmart.datastore.repository.UserRepository;
+import com.highpeak.parksmart.datastore.repository.VehicleRepository;
+import com.highpeak.parksmart.datastore.repository.UserRepository;
+import com.highpeak.parksmart.datastore.repository.VehicleRepository;
 import com.highpeak.parksmart.exception.DataException;
 import com.highpeak.parksmart.pojo.ParkingBean;
 import com.highpeak.parksmart.pojo.SlotBean;
@@ -11,6 +18,15 @@ import com.highpeak.parksmart.service.ParkingService;
 import com.highpeak.parksmart.util.Constants;
 import com.highpeak.parksmart.util.MessageBundleResource;
 import com.highpeak.parksmart.util.NullEmptyUtils;
+import com.highpeak.parksmart.util.ValidationHelper;
+import org.joda.time.DateTime;
+import org.joda.time.Minutes;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import com.highpeak.parksmart.util.Constants;
+import com.highpeak.parksmart.util.ValidationHelper;
+import org.joda.time.DateTime;
+import org.joda.time.Minutes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -30,13 +46,19 @@ public class ParkingServiceImpl implements ParkingService
     @Autowired
     MessageBundleResource messageBundle;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private VehicleRepository vehicleRepository;
+
+
     /**
      * Service to start parking
      *
      * @param parkingBean
      * @return
      */
-
     @Override
     public ParkingBean startParking(ParkingBean parkingBean) throws DataException
     {
@@ -70,24 +92,37 @@ public class ParkingServiceImpl implements ParkingService
      */
 
     @Override
-    public ParkingBean stopParking(ParkingBean parkingBean) throws DataException
+    public ParkingBean stopParking(ParkingBean parkingBean, int userId) throws DataException
     {
-        if(NullEmptyUtils.isNullorEmpty(parkingBean.getParkingId()))
         {
-            throw new DataException(Constants.EXCEPTION,messageBundle.getMessage(Constants.EMPTY_FIELD), HttpStatus.BAD_REQUEST);
+            if (NullEmptyUtils.isNullorEmpty(parkingBean.getParkingId()))
+            {
+                throw new DataException(Constants.EXCEPTION, messageBundle.getMessage(Constants.EMPTY_FIELD), HttpStatus.BAD_REQUEST);
+            }
+            Optional<UserModel> optionalUserModel = userRepository.findByIdAndIsActiveTrue(userId);
+            ValidationHelper.checkUserById(optionalUserModel);
+
+            Optional<ParkingModel> parkingModelOptional = parkingRepository.findByVehicleIdAndParkingIsActiveTrue(parkingBean.getVehicleId());
+            if (!parkingModelOptional.isPresent())
+                throw new DataException(Constants.EXCEPTION, "Booking not found", HttpStatus.BAD_REQUEST);
+
+            ParkingModel parkingModel = parkingModelOptional.get();
+            parkingModel.setEndTime(new Timestamp(System.currentTimeMillis()));
+            parkingModel.setAmount(String.valueOf(calculateAmount(parkingModel.getStartTime(), parkingModel.getEndTime())));
+            parkingModel.setParkingIsActive(false);
+            return setParkingBean(parkingModel);
         }
+    }
 
-        Optional<ParkingModel> parkingModel = parkingRepository.findByParkingIdAndParkingIsActiveTrue(parkingBean.getParkingId());
+    private float calculateAmount(Timestamp startTiome, Timestamp endTime){
 
-        if(!parkingModel.isPresent())
-        {
-            throw new DataException(Constants.EXCEPTION,messageBundle.getMessage(Constants.PARKING_DOESNT_EXIST),HttpStatus.BAD_REQUEST);
-        }
+        DateTime start = new DateTime(startTiome);
+        DateTime end = new DateTime(endTime);
 
-        parkingModel.get().setEndTime(new Timestamp(System.currentTimeMillis()));
-        parkingModel.get().setParkingIsActive(false);
-
-        return setParkingBean(parkingRepository.save(parkingModel.get()));
+        int minutes = Minutes.minutesBetween(start, end).getMinutes();
+        float chargePerMin = 0.50f;
+        float price = minutes * chargePerMin;
+        return price;
     }
 
     /**

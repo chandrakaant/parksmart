@@ -15,7 +15,7 @@ public interface ParkingAreaService
      * @throws DataException
      */
 
-    ParkingAreaBean registerParkingArea(ParkingAreaBean parkingAreaBean) throws DataException;
+    ParkingAreaBean registerParkingArea(ParkingAreaBean parkingAreaBean, int userId) throws DataException;
 
     /**
      * service to fetch parking area by id
@@ -25,7 +25,7 @@ public interface ParkingAreaService
      * @throws DataException
      */
 
-    ParkingAreaBean fetchParkingArea(ParkingAreaBean parkingAreaBean) throws DataException;
+    ParkingAreaBean fetchParkingArea(ParkingAreaBean parkingAreaBean, int userId) throws DataException;
 
     /**
      * service to fetch all
@@ -34,6 +34,6 @@ public interface ParkingAreaService
      * @throws DataException
      */
 
-    List<ParkingAreaBean> fetchAllParkingArea() throws DataException;
+    List<ParkingAreaBean> fetchAllParkingArea(int userId) throws DataException;
 
 }

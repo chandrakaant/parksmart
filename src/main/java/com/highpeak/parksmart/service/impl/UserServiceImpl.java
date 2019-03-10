@@ -4,14 +4,18 @@ package com.highpeak.parksmart.service.impl;
 import com.highpeak.parksmart.datastore.model.RoleEntity;
 import com.highpeak.parksmart.datastore.model.UserModel;
 import com.highpeak.parksmart.datastore.model.UserRoleModel;
+import com.highpeak.parksmart.datastore.model.VehicleModel;
 import com.highpeak.parksmart.datastore.repository.RoleRepository;
 import com.highpeak.parksmart.datastore.repository.UserRepository;
 import com.highpeak.parksmart.datastore.repository.UserRoleRepository;
+import com.highpeak.parksmart.datastore.repository.VehicleRepository;
 import com.highpeak.parksmart.exception.DataException;
 import com.highpeak.parksmart.pojo.LoginBean;
 import com.highpeak.parksmart.pojo.UserBean;
+import com.highpeak.parksmart.pojo.VehicleBean;
 import com.highpeak.parksmart.service.CacheService;
 import com.highpeak.parksmart.service.UserService;
+import com.highpeak.parksmart.service.VehicleService;
 import com.highpeak.parksmart.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +52,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private CacheService cacheService;
+
+    @Autowired
+    private VehicleService vehicleService;
+
+    @Autowired
+    private VehicleRepository vehicleRepository;
 
     /**
      * service td add or  update user
@@ -119,12 +129,61 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserBean updateUser(UserBean userBean, int userId) throws DataException
     {
-        Optional<UserModel> optionalUserModel = userRepository.findByIdAndIsActiveTrue(userId);
-        ValidationHelper.checkUserById(optionalUserModel);
+        try
+        {
+            Optional<UserModel> optionalUserModel = userRepository.findByIdAndIsActiveTrue(userId);
+            ValidationHelper.checkUserById(optionalUserModel);
 
-        UserModel userModel = optionalUserModel.get();
-        userModel = userRepository.save(mapUserBeanToUserModel(userBean, userModel));
-        return mapUserModelToUserBean(userModel);
+            UserModel userModel = optionalUserModel.get();
+
+
+            userModel = userRepository.save(mapUserBeanToUserModel(userBean, userModel));
+
+            VehicleBean vehicleBean = new VehicleBean();
+
+            if (!NullEmptyUtils.isNullorEmpty(userBean.getNumber()))
+                vehicleBean.setNumber(userBean.getNumber());
+            if (!NullEmptyUtils.isNullorEmpty(userBean.getVehicleName()))
+                vehicleBean.setNumber(userBean.getVehicleName());
+            if (!NullEmptyUtils.isNullorEmpty(userBean.getManufacturerName()))
+                vehicleBean.setManufacturerName(userBean.getManufacturerName());
+            if (!NullEmptyUtils.isNullorEmpty(userBean.getLocation()))
+                vehicleBean.setLocation(userBean.getVehicleLocation());
+
+            VehicleBean bean = new VehicleBean();
+
+            Optional<VehicleModel> vehicleModelOptional = vehicleRepository.findByUserIdAndIsActiveTrue(userModel.getId());
+
+            if (!vehicleModelOptional.isPresent()){
+                bean = vehicleService.addVehicle(vehicleBean, userModel.getId());
+            }
+            else {
+                vehicleBean.setId(vehicleModelOptional.get().getId());
+                bean = vehicleService.updateVehicle(vehicleBean, userModel.getId());
+            }
+
+            UserBean userBean1 = mapUserModelToUserBean(userModel);
+            userBean1.setNumber(bean.getNumber());
+            userBean1.setManufacturerName(bean.getManufacturerName());
+            userBean1.setVehicleName(bean.getName());
+            userBean1.setVehicleLocation(bean.getLocation());
+            return userBean1;
+
+        }
+        catch (DataException e)
+        {
+            e.printStackTrace();
+            throw e;
+
+        }
+        catch (Exception e)
+        {
+            LOGGER.error(e.getMessage());
+            e.printStackTrace();
+            throw new DataException(Constants.EXCEPTION, messageBundleResource.getMessage(Constants.INTERNAL_SERVER_ERROR),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
 
@@ -220,6 +279,10 @@ public class UserServiceImpl implements UserService {
             ValidationHelper.checkUserById(userModelOptional);
             UserModel userModel = userModelOptional.get();
 
+            System.out.println(loginBean.getOtp());
+            System.out.println(cacheService.gettingCache(userModel.getId()));
+            System.out.println(userId);
+
             if (cacheService.gettingCache(userModel.getId()).equals("Otp expired"))
             {
                 LOGGER.error("otp expired");
@@ -301,6 +364,21 @@ public class UserServiceImpl implements UserService {
 
         UserModel userModel = optionalUserModel.get();
 
-        return mapUserModelToUserBean(userModel);
+        VehicleModel bean = new VehicleModel();
+
+        Optional<VehicleModel> vehicleModelOptional = vehicleRepository.findByUserIdAndIsActiveTrue(userModel.getId());
+
+        UserBean userBean1 = mapUserModelToUserBean(userModel);
+
+        if (vehicleModelOptional.isPresent())
+        {
+            bean = vehicleModelOptional.get();
+            userBean1.setNumber(bean.getVehicleNumber());
+            userBean1.setManufacturerName(bean.getManufacturerName());
+            userBean1.setVehicleName(bean.getVehicleName());
+            userBean1.setVehicleLocation(bean.getVehicleLocation());
+        }
+
+        return userBean1;
     }
 }

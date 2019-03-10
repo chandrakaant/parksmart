@@ -8,10 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/rest/parking")
@@ -33,11 +30,11 @@ public class ParkingController extends AbstractRestService
      */
 
     @PostMapping("/startParking")
-    public ResponseEntity<?> startParking(@RequestBody ParkingBean parkingBean)
+    public ResponseEntity<?> startParking(@RequestBody ParkingBean parkingBean, @RequestHeader("Authorization") String authorization)
     {
         try
         {
-            return buildResponse(parkingService.startParking(parkingBean));
+            return buildResponse(parkingService.startParking(parkingBean, Integer.parseInt(getLoggedInUser().getPrincipal().toString())));
         }
         catch(DataException e)
         {
@@ -53,11 +50,11 @@ public class ParkingController extends AbstractRestService
      */
 
     @PostMapping("/stopParking")
-    public ResponseEntity<?> stopParking(@RequestBody ParkingBean parkingBean)
+    public ResponseEntity<?> stopParking(@RequestBody ParkingBean parkingBean, @RequestHeader("Authorization") String authorization)
     {
         try
         {
-            return buildResponse(parkingService.stopParking(parkingBean));
+            return buildResponse(parkingService.stopParking(parkingBean, Integer.parseInt(getLoggedInUser().getPrincipal().toString())));
         }
         catch(DataException e)
         {
@@ -73,11 +70,11 @@ public class ParkingController extends AbstractRestService
      */
 
     @PostMapping("/findCar")
-    public ResponseEntity<?> findCar(@RequestBody ParkingBean parkingBean)
+    public ResponseEntity<?> findCar(@RequestBody ParkingBean parkingBean, @RequestHeader("Authorization") String authorization)
     {
         try
         {
-            return buildResponse(parkingService.findCar(parkingBean));
+            return buildResponse(parkingService.findCar(parkingBean, Integer.parseInt(getLoggedInUser().getPrincipal().toString())));
         }
         catch(DataException e)
         {

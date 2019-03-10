@@ -27,11 +27,11 @@ public class ParkingAreaController extends AbstractRestService
      */
 
     @PostMapping("/registerParkingArea")
-    public ResponseEntity<?> registerParkingArea(@RequestBody ParkingAreaBean parkingAreaBean)
+    public ResponseEntity<?> registerParkingArea(@RequestBody ParkingAreaBean parkingAreaBean, @RequestHeader("Authorization") String authorization)
     {
         try
         {
-            return buildResponse(parkingAreaService.registerParkingArea(parkingAreaBean));
+            return buildResponse(parkingAreaService.registerParkingArea(parkingAreaBean, Integer.parseInt(getLoggedInUser().getPrincipal().toString())));
         }
         catch(DataException e)
         {
@@ -48,11 +48,11 @@ public class ParkingAreaController extends AbstractRestService
      */
 
     @PostMapping("/fetchParkingArea")
-    public ResponseEntity<?> fetchParkingArea(@RequestBody ParkingAreaBean parkingAreaBean)
+    public ResponseEntity<?> fetchParkingArea(@RequestBody ParkingAreaBean parkingAreaBean, @RequestHeader("Authorization") String authorization)
     {
         try
         {
-            return buildResponse(parkingAreaService.fetchParkingArea(parkingAreaBean));
+            return buildResponse(parkingAreaService.fetchParkingArea(parkingAreaBean, Integer.parseInt(getLoggedInUser().getPrincipal().toString())));
         }
         catch(DataException e)
         {
@@ -68,11 +68,11 @@ public class ParkingAreaController extends AbstractRestService
      */
 
     @GetMapping("/fetchAllParkingArea")
-    public ResponseEntity<?> fetchAllParkingArea()
+    public ResponseEntity<?> fetchAllParkingArea(@RequestHeader("Authorization") String authorization)
     {
         try
         {
-            return buildResponse(parkingAreaService.fetchAllParkingArea());
+            return buildResponse(parkingAreaService.fetchAllParkingArea(Integer.parseInt(getLoggedInUser().getPrincipal().toString())));
         }
         catch(DataException e)
         {

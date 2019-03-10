@@ -98,6 +98,7 @@ public class VehicleServiceImpl implements VehicleService {
         vehicleBean.setLocation(vehicleModel.getVehicleLocation());
         vehicleBean.setName(vehicleModel.getVehicleName());
         vehicleBean.setNumber(vehicleModel.getVehicleNumber());
+        vehicleBean.setManufacturerName(vehicleModel.getManufacturerName());
         return vehicleBean;
     }
 
@@ -191,5 +192,30 @@ public class VehicleServiceImpl implements VehicleService {
             throw new DataException(Constants.EXCEPTION, messageBundleResource.getMessage(Constants.INTERNAL_SERVER_ERROR),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /**
+     * Service To Fetch Vehicle By User Id
+     *
+     * @param vehicleBean
+     * @return
+     */
+
+    @Override
+    public VehicleBean fetchVehicleByUserId(VehicleBean vehicleBean) throws DataException
+    {
+        if(NullEmptyUtils.isNullorEmpty(vehicleBean.getUserId()))
+        {
+            throw new DataException(Constants.EXCEPTION,messageBundleResource.getMessage(Constants.EMPTY_FIELD), HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<VehicleModel> vehicleModel = vehicleRepository.findByUserIdAndIsActiveTrue(vehicleBean.getUserId());
+
+        if(!vehicleModel.isPresent())
+        {
+            throw new DataException(Constants.EXCEPTION,messageBundleResource.getMessage(Constants.VEHICLE_DOESNT_EXIST), HttpStatus.BAD_REQUEST);
+        }
+
+        return mapVehicleModelToBean(vehicleModel.get());
     }
 }

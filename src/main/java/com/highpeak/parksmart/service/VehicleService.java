@@ -13,4 +13,6 @@ public interface VehicleService {
     void deleteVehicle(VehicleBean vehicleBean, int userId) throws DataException;
 
     VehicleBean fetchVehicle(VehicleBean vehicleBean, int userId) throws DataException;
+
+    VehicleBean fetchVehicleByUserId(VehicleBean vehicleBean) throws DataException;
 }

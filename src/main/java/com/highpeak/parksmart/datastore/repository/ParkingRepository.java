@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface ParkingRepository extends PagingAndSortingRepository<ParkingModel,Integer>
 {
 
+    Optional<ParkingModel> findByVehicleIdAndParkingIsActiveTrue(int vehicleId);
     Optional<ParkingModel> findByParkingId(int parkingId);
 
     Optional<ParkingModel> findByParkingIdAndParkingIsActiveTrue(int parkingId);
