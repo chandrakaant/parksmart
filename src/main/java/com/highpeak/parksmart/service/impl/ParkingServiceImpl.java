@@ -1,6 +1,7 @@
 package com.highpeak.parksmart.service.impl;
 
 import com.highpeak.parksmart.datastore.model.ParkingModel;
+import com.highpeak.parksmart.datastore.model.SlotModel;
 import com.highpeak.parksmart.datastore.model.UserModel;
 import com.highpeak.parksmart.datastore.repository.ParkingRepository;
 import com.highpeak.parksmart.datastore.repository.SlotRepository;
@@ -8,9 +9,11 @@ import com.highpeak.parksmart.datastore.repository.UserRepository;
 import com.highpeak.parksmart.datastore.repository.VehicleRepository;
 import com.highpeak.parksmart.exception.DataException;
 import com.highpeak.parksmart.pojo.ParkingBean;
+import com.highpeak.parksmart.pojo.SlotBean;
 import com.highpeak.parksmart.service.ParkingService;
 import com.highpeak.parksmart.util.Constants;
 import com.highpeak.parksmart.util.MessageBundleResource;
+import com.highpeak.parksmart.util.NullEmptyUtils;
 import com.highpeak.parksmart.util.ValidationHelper;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
@@ -80,9 +83,40 @@ public class ParkingServiceImpl implements ParkingService
     }
 
     @Override
-    public ParkingBean findCar(ParkingBean parkingBean, int userId) throws DataException {
-        return null;
+    public SlotBean findCar(ParkingBean parkingBean, int userId) throws DataException {
+        if(NullEmptyUtils.isNullorEmpty(parkingBean.getParkingId()))
+        {
+            throw new DataException(Constants.EXCEPTION,messageBundle.getMessage(Constants.EMPTY_FIELD), HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<ParkingModel> parkingModel = parkingRepository.findByParkingIdAndParkingIsActiveTrue(parkingBean.getParkingId());
+
+        if(!parkingModel.isPresent())
+        {
+            throw new DataException(Constants.EXCEPTION,messageBundle.getMessage(Constants.PARKING_DOESNT_EXIST),HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<SlotModel> slotModel = slotRepository.findBySlotIdAndSlotActiveTrue(parkingModel.get().getSlotId());
+
+        if(!slotModel.isPresent())
+        {
+            throw new DataException(Constants.EXCEPTION,messageBundle.getMessage(Constants.SLOT_DOESNT_EXIST),HttpStatus.BAD_REQUEST);
+        }
+
+        return setSlotBean(slotModel.get());
     }
+
+
+    private SlotBean setSlotBean(SlotModel slotModel)
+    {
+        SlotBean slotBean = new SlotBean();
+
+        slotBean.setSlotLat(slotModel.getSlotLat());
+        slotBean.setSlotLong(slotModel.getSlotLong());
+
+        return slotBean;
+    }
+
 
     /**
      * private method to set parkingBean

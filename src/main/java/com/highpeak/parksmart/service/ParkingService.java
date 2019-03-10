@@ -10,5 +10,5 @@ public interface ParkingService
 
     ParkingBean stopParking(ParkingBean parkingBean, int userId) throws DataException;
 
-    ParkingBean findCar(ParkingBean parkingBean, int userId) throws DataException;
+    SlotBean findCar(ParkingBean parkingBean, int userId) throws DataException;
 }
