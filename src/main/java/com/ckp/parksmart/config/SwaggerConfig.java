@@ -1,4 +1,4 @@
-package com.ckp.parksmart;
+package com.ckp.parksmart.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

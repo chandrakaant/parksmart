@@ -27,10 +27,10 @@ public class ParkingAreaServiceImpl implements ParkingAreaService
     private static Logger LOGGER = LoggerFactory.getLogger(ParkingAreaServiceImpl.class);
 
     @Autowired
-    ParkingAreaRepository parkingAreaRepository;
+    private ParkingAreaRepository parkingAreaRepository;
 
     @Autowired
-    MessageBundleResource messageBundleResource;
+    private MessageBundleResource messageBundleResource;
 
     @Autowired
     private UserRepository userRepository;

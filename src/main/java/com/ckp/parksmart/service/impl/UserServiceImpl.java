@@ -17,7 +17,6 @@ import com.ckp.parksmart.service.CacheService;
 import com.ckp.parksmart.service.UserService;
 import com.ckp.parksmart.service.VehicleService;
 import com.ckp.parksmart.util.*;
-import com.highpeak.parksmart.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package com.ckp.parksmart.datastore.repository;
 
-import com.ckp.parksmart.datastore.model.ParkingAreaModel;
+import   com.ckp.parksmart.datastore.model.ParkingAreaModel;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
